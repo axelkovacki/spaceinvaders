@@ -3,62 +3,62 @@
  * MIT Licensed.
  */
 // Inspired by base2 and Prototype
-(function(){
-  var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
- 
+(function () {
+  var initializing = false, fnTest = /xyz/.test(function () { xyz; }) ? /\b_super\b/ : /.*/;
+
   // The base Class implementation (does nothing)
-  this.Class = function(){};
- 
+  this.Class = function () { };
+
   // Create a new Class that inherits from this class
-  Class.extend = function(prop) {
+  Class.extend = function (prop) {
     var _super = this.prototype;
-   
+
     // Instantiate a base class (but only create the instance,
     // don't run the init constructor)
     initializing = true;
     var prototype = new this();
     initializing = false;
-   
+
     // Copy the properties over onto the new prototype
     for (var name in prop) {
       // Check if we're overwriting an existing function
       prototype[name] = typeof prop[name] == "function" &&
         typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-        (function(name, fn){
-          return function() {
+        (function (name, fn) {
+          return function () {
             var tmp = this._super;
-           
+
             // Add a new ._super() method that is the same method
             // but on the super-class
             this._super = _super[name];
-           
+
             // The method only need to be bound temporarily, so we
             // remove it when we're done executing
-            var ret = fn.apply(this, arguments);        
+            var ret = fn.apply(this, arguments);
             this._super = tmp;
-           
+
             return ret;
           };
         })(name, prop[name]) :
         prop[name];
     }
-   
+
     // The dummy class constructor
     function Class() {
       // All construction is actually done in the init method
-      if ( !initializing && this.init )
+      if (!initializing && this.init)
         this.init.apply(this, arguments);
     }
-   
+
     // Populate our constructed prototype object
     Class.prototype = prototype;
-   
+
     // Enforce the constructor to be what we expect
     Class.prototype.constructor = Class;
- 
+
     // And make this class extendable
     Class.extend = arguments.callee;
-   
+
     return Class;
   };
 })();
@@ -68,15 +68,15 @@
 // shims
 //
 // ###################################################################
-(function() {
+(function () {
   var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
   window.requestAnimationFrame = requestAnimationFrame;
 })();
 
-(function() {
+(function () {
   if (!window.performance.now) {
-    window.performance.now = (!Date.now) ? function() { return new Date().getTime(); } : 
-      function() { return Date.now(); }
+    window.performance.now = (!Date.now) ? function () { return new Date().getTime(); } :
+      function () { return Date.now(); }
   }
 })();
 
@@ -93,9 +93,9 @@ var RIGHT_KEY = 39;
 var SHOOT_KEY = 32;
 var TEXT_BLINK_FREQ = 500;
 var PLAYER_CLIP_RECT = { x: 0, y: 204, w: 62, h: 32 };
-var ALIEN_BOTTOM_ROW = [ { x: 0, y: 0, w: 51, h: 34 }, { x: 0, y: 102, w: 51, h: 34 }];
-var ALIEN_MIDDLE_ROW = [ { x: 0, y: 137, w: 50, h: 33 }, { x: 0, y: 170, w: 50, h: 34 }];
-var ALIEN_TOP_ROW = [ { x: 0, y: 68, w: 50, h: 32 }, { x: 0, y: 34, w: 50, h: 32 }];
+var ALIEN_BOTTOM_ROW = [{ x: 0, y: 0, w: 51, h: 34 }, { x: 0, y: 102, w: 51, h: 34 }];
+var ALIEN_MIDDLE_ROW = [{ x: 0, y: 137, w: 50, h: 33 }, { x: 0, y: 170, w: 50, h: 34 }];
+var ALIEN_TOP_ROW = [{ x: 0, y: 68, w: 50, h: 32 }, { x: 0, y: 34, w: 50, h: 32 }];
 var ALIEN_X_MARGIN = 40;
 var ALIEN_SQUAD_WIDTH = 11 * ALIEN_X_MARGIN;
 
@@ -106,11 +106,11 @@ var ALIEN_SQUAD_WIDTH = 11 * ALIEN_X_MARGIN;
 //
 // ###################################################################
 function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min;
+  return Math.random() * (max - min) + min;
 }
 
 function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function clamp(num, min, max) {
@@ -120,37 +120,37 @@ function clamp(num, min, max) {
 function valueInRange(value, min, max) {
   return (value <= max) && (value >= min);
 }
- 
+
 function checkRectCollision(A, B) {
   var xOverlap = valueInRange(A.x, B.x, B.x + B.w) ||
-  valueInRange(B.x, A.x, A.x + A.w);
- 
+    valueInRange(B.x, A.x, A.x + A.w);
+
   var yOverlap = valueInRange(A.y, B.y, B.y + B.h) ||
-  valueInRange(B.y, A.y, A.y + A.h); 
+    valueInRange(B.y, A.y, A.y + A.h);
   return xOverlap && yOverlap;
 }
 
 var Point2D = Class.extend({
-  init: function(x, y) {
+  init: function (x, y) {
     this.x = (typeof x === 'undefined') ? 0 : x;
     this.y = (typeof y === 'undefined') ? 0 : y;
   },
-  
-  set: function(x, y) {
+
+  set: function (x, y) {
     this.x = x;
     this.y = y;
   }
 });
 
 var Rect = Class.extend({
-  init: function(x, y, w, h) {
+  init: function (x, y, w, h) {
     this.x = (typeof x === 'undefined') ? 0 : x;
     this.y = (typeof y === 'undefined') ? 0 : y;
     this.w = (typeof w === 'undefined') ? 0 : w;
     this.h = (typeof h === 'undefined') ? 0 : h;
   },
-  
-  set: function(x, y, w, h) {
+
+  set: function (x, y, w, h) {
     this.x = x;
     this.y = y;
     this.w = w;
@@ -188,62 +188,62 @@ var hasGameStarted = false;
 //
 // ###################################################################
 var BaseSprite = Class.extend({
-  init: function(img, x, y) {
+  init: function (img, x, y) {
     this.img = img;
     this.position = new Point2D(x, y);
     this.scale = new Point2D(1, 1);
     this.bounds = new Rect(x, y, this.img.width, this.img.height);
     this.doLogic = true;
   },
-                           
-  update: function(dt) { },
-  
-  _updateBounds: function() {
-     this.bounds.set(this.position.x, this.position.y, ~~(0.5 + this.img.width * this.scale.x), ~~(0.5 + this.img.height * this.scale.y));
+
+  update: function (dt) { },
+
+  _updateBounds: function () {
+    this.bounds.set(this.position.x, this.position.y, ~~(0.5 + this.img.width * this.scale.x), ~~(0.5 + this.img.height * this.scale.y));
   },
-  
-  _drawImage: function() {
+
+  _drawImage: function () {
     ctx.drawImage(this.img, this.position.x, this.position.y);
   },
-  
-  draw: function(resized) {
+
+  draw: function (resized) {
     this._updateBounds();
-    
+
     this._drawImage();
   }
 });
 
 var SheetSprite = BaseSprite.extend({
-  init: function(sheetImg, clipRect, x, y) {
+  init: function (sheetImg, clipRect, x, y) {
     this._super(sheetImg, x, y);
     this.clipRect = clipRect;
     this.bounds.set(x, y, this.clipRect.w, this.clipRect.h);
   },
-  
-  update: function(dt) {},
-  
-  _updateBounds: function() {
+
+  update: function (dt) { },
+
+  _updateBounds: function () {
     var w = ~~(0.5 + this.clipRect.w * this.scale.x);
     var h = ~~(0.5 + this.clipRect.h * this.scale.y);
-    this.bounds.set(this.position.x - w/2, this.position.y - h/2, w, h);
+    this.bounds.set(this.position.x - w / 2, this.position.y - h / 2, w, h);
   },
-  
-  _drawImage: function() {
+
+  _drawImage: function () {
     ctx.save();
     ctx.transform(this.scale.x, 0, 0, this.scale.y, this.position.x, this.position.y);
-    ctx.drawImage(this.img, this.clipRect.x, this.clipRect.y, this.clipRect.w, this.clipRect.h, ~~(0.5 + -this.clipRect.w*0.5), ~~(0.5 + -this.clipRect.h*0.5), this.clipRect.w, this.clipRect.h);
+    ctx.drawImage(this.img, this.clipRect.x, this.clipRect.y, this.clipRect.w, this.clipRect.h, ~~(0.5 + -this.clipRect.w * 0.5), ~~(0.5 + -this.clipRect.h * 0.5), this.clipRect.w, this.clipRect.h);
     ctx.restore();
 
   },
-  
-  draw: function(resized) {
+
+  draw: function (resized) {
     this._super(resized);
   }
 });
 
 var Player = SheetSprite.extend({
-  init: function() {
-    this._super(spriteSheetImg, PLAYER_CLIP_RECT, CANVAS_WIDTH/2, CANVAS_HEIGHT - 70);
+  init: function () {
+    this._super(spriteSheetImg, PLAYER_CLIP_RECT, CANVAS_WIDTH / 2, CANVAS_HEIGHT - 70);
     this.scale.set(0.85, 0.85);
     this.lives = 3;
     this.xVel = 0;
@@ -251,34 +251,34 @@ var Player = SheetSprite.extend({
     this.bulletDelayAccumulator = 0;
     this.score = 0;
   },
-  
-  reset: function() {
+
+  reset: function () {
     this.lives = 3;
     this.score = 0;
-    this.position.set(CANVAS_WIDTH/2, CANVAS_HEIGHT - 70);
+    this.position.set(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 70);
   },
-  
-  shoot: function() {
+
+  shoot: function () {
     var bullet = new Bullet(this.position.x, this.position.y - this.bounds.h / 2, 1, 1000);
     this.bullets.push(bullet);
   },
-  
-  handleInput: function() {
-    if (isKeyDown(LEFT_KEY)) {
+
+  handleInput: function () { 
+    if (position <= 250) {
       this.xVel = -175;
-    } else if (isKeyDown(RIGHT_KEY)) {
+      console.log("left")
+    } else if (position >= 250) {
+      console.log("right")
       this.xVel = 175;
     } else this.xVel = 0;
-    
-    if (wasKeyPressed(SHOOT_KEY)) {
-      if (this.bulletDelayAccumulator > 0.5) {
-        this.shoot(); 
-        this.bulletDelayAccumulator = 0;
-      }
+
+    if (this.bulletDelayAccumulator > 0.5) {
+      this.shoot();
+      this.bulletDelayAccumulator = 0;
     }
   },
-  
-  updateBullets: function(dt) {
+
+  updateBullets: function (dt) {
     for (var i = this.bullets.length - 1; i >= 0; i--) {
       var bullet = this.bullets[i];
       if (bullet.alive) {
@@ -289,20 +289,20 @@ var Player = SheetSprite.extend({
       }
     }
   },
-  
-  update: function(dt) {
+
+  update: function (dt) {
     // update time passed between shots
     this.bulletDelayAccumulator += dt;
-    
+
     // apply x vel
     this.position.x += this.xVel * dt;
-    
+
     // cap player position in screen bounds
-    this.position.x = clamp(this.position.x, this.bounds.w/2, CANVAS_WIDTH - this.bounds.w/2);
+    this.position.x = clamp(this.position.x, this.bounds.w / 2, CANVAS_WIDTH - this.bounds.w / 2);
     this.updateBullets(dt);
   },
-  
-  draw: function(resized) {
+
+  draw: function (resized) {
     this._super(resized);
 
     // draw bullets
@@ -316,28 +316,28 @@ var Player = SheetSprite.extend({
 });
 
 var Bullet = BaseSprite.extend({
-  init: function(x, y, direction, speed) {
+  init: function (x, y, direction, speed) {
     this._super(bulletImg, x, y);
     this.direction = direction;
     this.speed = speed;
     this.alive = true;
   },
-  
-  update: function(dt) {
-    this.position.y -= (this.speed * this.direction) * dt; 
-    
+
+  update: function (dt) {
+    this.position.y -= (this.speed * this.direction) * dt;
+
     if (this.position.y < 0) {
       this.alive = false;
     }
   },
-  
-  draw: function(resized) {
+
+  draw: function (resized) {
     this._super(resized);
   }
 });
 
 var Enemy = SheetSprite.extend({
-  init: function(clipRects, x, y) {
+  init: function (clipRects, x, y) {
     this._super(spriteSheetImg, clipRects[0], x, y);
     this.clipRects = clipRects;
     this.scale.set(0.5, 0.5);
@@ -348,29 +348,29 @@ var Enemy = SheetSprite.extend({
     this.doShoot - false;
     this.bullet = null;
   },
-  
-  toggleFrame: function() {
+
+  toggleFrame: function () {
     this.onFirstState = !this.onFirstState;
     this.clipRect = (this.onFirstState) ? this.clipRects[0] : this.clipRects[1];
   },
-  
-  shoot: function() {
-    this.bullet = new Bullet(this.position.x, this.position.y + this.bounds.w/2, -1, 500);
+
+  shoot: function () {
+    this.bullet = new Bullet(this.position.x, this.position.y + this.bounds.w / 2, -1, 500);
   },
-  
-  update: function(dt) {
+
+  update: function (dt) {
     this.stepAccumulator += dt;
-    
+
     if (this.stepAccumulator >= this.stepDelay) {
-      if (this.position.x < this.bounds.w/2 + 20 && alienDirection < 0) {
-      updateAlienLogic = true;
-    } if (alienDirection === 1 && this.position.x > CANVAS_WIDTH - this.bounds.w/2 - 20) {
-      updateAlienLogic = true;
-    }
+      if (this.position.x < this.bounds.w / 2 + 20 && alienDirection < 0) {
+        updateAlienLogic = true;
+      } if (alienDirection === 1 && this.position.x > CANVAS_WIDTH - this.bounds.w / 2 - 20) {
+        updateAlienLogic = true;
+      }
       if (this.position.y > CANVAS_WIDTH - 50) {
         reset();
       }
-      
+
       var fireTest = Math.floor(Math.random() * (this.stepDelay + 1));
       if (getRandomArbitrary(0, 1000) <= 5 * (this.stepDelay + 1)) {
         this.doShoot = true;
@@ -380,15 +380,15 @@ var Enemy = SheetSprite.extend({
       this.stepAccumulator = 0;
     }
     this.position.y += alienYDown;
-    
+
     if (this.bullet !== null && this.bullet.alive) {
-      this.bullet.update(dt);  
+      this.bullet.update(dt);
     } else {
       this.bullet = null;
     }
   },
-  
-  draw: function(resized) {
+
+  draw: function (resized) {
     this._super(resized);
     if (this.bullet !== null && this.bullet.alive) {
       this.bullet.draw(resized);
@@ -397,63 +397,63 @@ var Enemy = SheetSprite.extend({
 });
 
 var ParticleExplosion = Class.extend({
-  init: function() {
+  init: function () {
     this.particlePool = [];
     this.particles = [];
   },
-  
-  draw: function() {
+
+  draw: function () {
     for (var i = this.particles.length - 1; i >= 0; i--) {
       var particle = this.particles[i];
       particle.moves++;
-	    particle.x += particle.xunits;
-		  particle.y += particle.yunits + (particle.gravity * particle.moves);
-			particle.life--;
-			
-			if (particle.life <= 0 ) {
-				if (this.particlePool.length < 100) {
-					this.particlePool.push(this.particles.splice(i,1));
-				} else {
-					this.particles.splice(i,1);
-				}
-			} else {
-				ctx.globalAlpha = (particle.life)/(particle.maxLife);
-				ctx.fillStyle = particle.color;
-				ctx.fillRect(particle.x, particle.y, particle.width, particle.height);
-				ctx.globalAlpha = 1;
-			}
+      particle.x += particle.xunits;
+      particle.y += particle.yunits + (particle.gravity * particle.moves);
+      particle.life--;
+
+      if (particle.life <= 0) {
+        if (this.particlePool.length < 100) {
+          this.particlePool.push(this.particles.splice(i, 1));
+        } else {
+          this.particles.splice(i, 1);
+        }
+      } else {
+        ctx.globalAlpha = (particle.life) / (particle.maxLife);
+        ctx.fillStyle = particle.color;
+        ctx.fillRect(particle.x, particle.y, particle.width, particle.height);
+        ctx.globalAlpha = 1;
+      }
     }
   },
-  
-  createExplosion: function(x, y, color, number, width, height, spd, grav, lif) {
-  for (var i =0;i < number;i++) {
-			var angle = Math.floor(Math.random()*360);
-			var speed = Math.floor(Math.random()*spd/2) + spd;	
-			var life = Math.floor(Math.random()*lif)+lif/2;
-			var radians = angle * Math.PI/ 180;
-			var xunits = Math.cos(radians) * speed;
-			var yunits = Math.sin(radians) * speed;
-				
-			if (this.particlePool.length > 0) {
-				var tempParticle = this.particlePool.pop();
-				tempParticle.x = x;
-				tempParticle.y = y;
-				tempParticle.xunits = xunits;
-				tempParticle.yunits = yunits;
-				tempParticle.life = life;
-				tempParticle.color = color;
-				tempParticle.width = width;
-				tempParticle.height = height;
-				tempParticle.gravity = grav;
-				tempParticle.moves = 0;
-				tempParticle.alpha = 1;
-				tempParticle.maxLife = life;
-				this.particles.push(tempParticle);
-			} else {
-				this.particles.push({x:x,y:y,xunits:xunits,yunits:yunits,life:life,color:color,width:width,height:height,gravity:grav,moves:0,alpha:1, maxLife:life});
-			}	
-	
-		}
+
+  createExplosion: function (x, y, color, number, width, height, spd, grav, lif) {
+    for (var i = 0; i < number; i++) {
+      var angle = Math.floor(Math.random() * 360);
+      var speed = Math.floor(Math.random() * spd / 2) + spd;
+      var life = Math.floor(Math.random() * lif) + lif / 2;
+      var radians = angle * Math.PI / 180;
+      var xunits = Math.cos(radians) * speed;
+      var yunits = Math.sin(radians) * speed;
+
+      if (this.particlePool.length > 0) {
+        var tempParticle = this.particlePool.pop();
+        tempParticle.x = x;
+        tempParticle.y = y;
+        tempParticle.xunits = xunits;
+        tempParticle.yunits = yunits;
+        tempParticle.life = life;
+        tempParticle.color = color;
+        tempParticle.width = width;
+        tempParticle.height = height;
+        tempParticle.gravity = grav;
+        tempParticle.moves = 0;
+        tempParticle.alpha = 1;
+        tempParticle.maxLife = life;
+        this.particles.push(tempParticle);
+      } else {
+        this.particles.push({ x: x, y: y, xunits: xunits, yunits: yunits, life: life, color: color, width: width, height: height, gravity: grav, moves: 0, alpha: 1, maxLife: life });
+      }
+
+    }
   }
 });
 
@@ -467,13 +467,13 @@ function initCanvas() {
   // create our canvas and context
   canvas = document.getElementById('game-canvas');
   ctx = canvas.getContext('2d');
-  
+
   // turn off image smoothing
   setImageSmoothing(false);
-  
+
   // create our main sprite sheet img
   spriteSheetImg = new Image();
-  spriteSheetImg.src = SPRITE_SHEET_SRC;  
+  spriteSheetImg.src = SPRITE_SHEET_SRC;
   preDrawImages();
 
   // add event listeners and initially resize
@@ -483,12 +483,12 @@ function initCanvas() {
 }
 
 function preDrawImages() {
-  var canvas = drawIntoCanvas(2, 8, function(ctx) {
-      ctx.fillStyle = '#f04d6e';
-      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    });
-    bulletImg = new Image();
-    bulletImg.src = canvas.toDataURL();
+  var canvas = drawIntoCanvas(2, 8, function (ctx) {
+    ctx.fillStyle = '#f04d6e';
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  });
+  bulletImg = new Image();
+  bulletImg.src = canvas.toDataURL();
 }
 
 function setImageSmoothing(value) {
@@ -504,7 +504,7 @@ function initGame() {
   aliens = [];
   player = new Player();
   particleManager = new ParticleExplosion();
-  setupAlienFormation();  
+  setupAlienFormation();
   drawBottomHud();
 }
 
@@ -515,13 +515,13 @@ function setupAlienFormation() {
     var gridY = Math.floor(i / 11);
     var clipRects;
     switch (gridY) {
-      case 0: 
+      case 0:
       case 1: clipRects = ALIEN_BOTTOM_ROW; break;
-      case 2: 
+      case 2:
       case 3: clipRects = ALIEN_MIDDLE_ROW; break;
       case 4: clipRects = ALIEN_TOP_ROW; break;
     }
-    aliens.push(new Enemy(clipRects, (CANVAS_WIDTH/2 - ALIEN_SQUAD_WIDTH/2) + ALIEN_X_MARGIN/2 + gridX * ALIEN_X_MARGIN, CANVAS_HEIGHT/3.25 - gridY * 40));
+    aliens.push(new Enemy(clipRects, (CANVAS_WIDTH / 2 - ALIEN_SQUAD_WIDTH / 2) + ALIEN_X_MARGIN / 2 + gridX * ALIEN_X_MARGIN, CANVAS_HEIGHT / 3.25 - gridY * 40));
     alienCount++;
   }
 }
@@ -564,7 +564,7 @@ function updateAliens(dt) {
     alienDirection = -alienDirection;
     alienYDown = 25;
   }
-  
+
   for (var i = aliens.length - 1; i >= 0; i--) {
     var alien = aliens[i];
     if (!alien.alive) {
@@ -577,13 +577,13 @@ function updateAliens(dt) {
       }
       return;
     }
-    
+
     alien.stepDelay = ((alienCount * 20) - (wave * 10)) / 1000;
     if (alien.stepDelay <= 0.05) {
       alien.stepDelay = 0.05;
     }
     alien.update(dt);
-    
+
     if (alien.doShoot) {
       alien.doShoot = false;
       alien.shoot();
@@ -594,14 +594,14 @@ function updateAliens(dt) {
 
 function resolveBulletEnemyCollisions() {
   var bullets = player.bullets;
-  
+
   for (var i = 0, len = bullets.length; i < len; i++) {
     var bullet = bullets[i];
     for (var j = 0, alen = aliens.length; j < alen; j++) {
       var alien = aliens[j];
       if (checkRectCollision(bullet.bounds, alien.bounds)) {
         alien.alive = bullet.alive = false;
-        particleManager.createExplosion(alien.position.x, alien.position.y, 'white', 70, 5,5,3,.15,50);
+        particleManager.createExplosion(alien.position.x, alien.position.y, 'white', 70, 5, 5, 3, .15, 50);
         player.score += 25;
       }
     }
@@ -615,10 +615,10 @@ function resolveBulletPlayerCollisions() {
       if (player.lives === 0) {
         hasGameStarted = false;
       } else {
-       alien.bullet.alive = false;
-       particleManager.createExplosion(player.position.x, player.position.y, '#ffed00', 100, 8,8,6,0.001,40);
-       player.position.set(CANVAS_WIDTH/2, CANVAS_HEIGHT - 70);
-       player.lives--;
+        alien.bullet.alive = false;
+        particleManager.createExplosion(player.position.x, player.position.y, '#ffed00', 100, 8, 8, 6, 0.001, 40);
+        player.position.set(CANVAS_WIDTH / 2, CANVAS_HEIGHT - 70);
+        player.lives--;
         break;
       }
 
@@ -656,7 +656,7 @@ function fillText(text, x, y, color, fontSize) {
 
 function fillCenteredText(text, x, y, color, fontSize) {
   var metrics = ctx.measureText(text);
-  fillText(text, x - metrics.width/2, y, color, fontSize);
+  fillText(text, x - metrics.width / 2, y, color, fontSize);
 }
 
 function fillBlinkingText(text, x, y, blinkFreq, color, fontSize) {
@@ -669,10 +669,10 @@ function drawBottomHud() {
   ctx.fillStyle = '#ffed00';
   ctx.fillRect(0, CANVAS_HEIGHT - 30, CANVAS_WIDTH, 2);
   fillText(player.lives + ' x ', 10, CANVAS_HEIGHT - 7.5, '#f04d6e', 20);
-  ctx.drawImage(spriteSheetImg, player.clipRect.x, player.clipRect.y, player.clipRect.w, 
-                 player.clipRect.h, 45, CANVAS_HEIGHT - 23, player.clipRect.w * 0.5,
-                 player.clipRect.h * 0.5);
-  fillCenteredText('SCORE: ' + player.score, CANVAS_WIDTH/2, 20);
+  ctx.drawImage(spriteSheetImg, player.clipRect.x, player.clipRect.y, player.clipRect.w,
+    player.clipRect.h, 45, CANVAS_HEIGHT - 23, player.clipRect.w * 0.5,
+    player.clipRect.h * 0.5);
+  fillCenteredText('PONTOS: ' + player.score, CANVAS_WIDTH / 2, 20);
 }
 
 function drawAliens(resized) {
@@ -683,15 +683,15 @@ function drawAliens(resized) {
 }
 
 function drawGame(resized) {
-  player.draw(resized);  
+  player.draw(resized);
   drawAliens(resized);
   particleManager.draw();
   drawBottomHud();
 }
 
 function drawStartScreen() {
-  fillCenteredText("Space Invaders", CANVAS_WIDTH/2, CANVAS_HEIGHT/2.75, '#FFFFFF', 36);
-  fillBlinkingText("Se aproxime para jogar!", CANVAS_WIDTH/2, CANVAS_HEIGHT/2, 500, '#FFFFFF', 36);
+  fillCenteredText("Space Invaders", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2.75, '#FFFFFF', 36);
+  fillBlinkingText("Se aproxime para jogar!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 500, '#FFFFFF', 36);
 }
 
 function animate() {
@@ -702,12 +702,12 @@ function animate() {
     initGame();
     hasGameStarted = true;
   }
-  
+
   if (hasGameStarted) {
-     updateGame(dt / 1000);  
+    updateGame(dt / 1000);
   }
 
- 
+
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   if (hasGameStarted) {
@@ -729,18 +729,18 @@ function resize() {
   var w = window.innerWidth;
   var h = window.innerHeight;
 
-	// calculate the scale factor to keep a correct aspect ratio
+  // calculate the scale factor to keep a correct aspect ratio
   var scaleFactor = Math.min(w / CANVAS_WIDTH, h / CANVAS_HEIGHT);
-  
+
   if (IS_CHROME) {
     canvas.width = CANVAS_WIDTH * scaleFactor;
     canvas.height = CANVAS_HEIGHT * scaleFactor;
     setImageSmoothing(false);
-    ctx.transform(scaleFactor, 0, 0, scaleFactor, 0, 0);   
+    ctx.transform(scaleFactor, 0, 0, scaleFactor, 0, 0);
   } else {
     // resize the canvas css properties
     canvas.style.width = CANVAS_WIDTH * scaleFactor + 'px';
-    canvas.style.height = CANVAS_HEIGHT * scaleFactor + 'px'; 
+    canvas.style.height = CANVAS_HEIGHT * scaleFactor + 'px';
   }
 }
 
@@ -759,7 +759,7 @@ function onKeyUp(e) {
 // Start game!
 //
 // ###################################################################
-window.onload = function() {
+window.onload = function () {
   init();
   animate();
 };

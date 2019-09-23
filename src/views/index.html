@@ -39,6 +39,17 @@
       image-rendering: -webkit-optimize-contrast;
       image-rendering: optimize-contrast
     }
+
+    .canvasbox {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      width: 23%;
+    }
+
+    video {
+      display: none;
+    }
   </style>
 </head>
 
@@ -49,19 +60,15 @@
     align-items: center;
     justify-content: center;
   ">
-    <canvas id="game-canvas" width="640" height="640"></canvas>
+    <canvas id="game-canvas"></canvas>
+
+    <video class="videobox canvasbox" autoplay="autoplay" id="webcam"></video>
+    <canvas id="webcam-canvas" class="border canvasbox"></canvas>
   </div>
 
-  <!-- <script src="./js/starfield.js"></script> -->
-  <script src="./js/game.js"></script>
-  <!-- <script>
-    //  Create the starfield.
-    var container = document.getElementById('starfield');
-    var starfield = new Starfield();
-    starfield.initialise(container);
-    starfield.start();
-
-  </script> -->
+  <script src="/js/handtrack.min.js"></script>
+  <script src="/js/game.js"></script>
+  <script src="/js/detection.js"></script>
 </body>
 
 </html>
