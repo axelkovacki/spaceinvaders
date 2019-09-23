@@ -180,6 +180,7 @@ var alienYDown = 0;
 var alienCount = 0;
 var wave = 1;
 var hasGameStarted = false;
+var hasGameFinished = false;
 
 
 
@@ -264,10 +265,10 @@ var Player = SheetSprite.extend({
   },
 
   handleInput: function () { 
-    if (position <= 250) {
+    if (position <= 230) {
       this.xVel = -175;
       console.log("left")
-    } else if (position >= 250) {
+    } else if (position >= 230) {
       console.log("right")
       this.xVel = 175;
     } else this.xVel = 0;
@@ -613,6 +614,7 @@ function resolveBulletPlayerCollisions() {
     if (alien.bullet !== null && checkRectCollision(alien.bullet.bounds, player.bounds)) {
       if (player.lives === 0) {
         hasGameStarted = false;
+        hasGameFinished = true;
       } else {
         alien.bullet.alive = false;
         particleManager.createExplosion(player.position.x, player.position.y, '#ffed00', 100, 8, 8, 6, 0.001, 40);
