@@ -355,7 +355,7 @@ var Enemy = SheetSprite.extend({
   },
 
   shoot: function () {
-    this.bullet = new Bullet(this.position.x, this.position.y + this.bounds.w / 2, -1, 500);
+    this.bullet = new Bullet(this.position.x, this.position.y + this.bounds.w / 2, -1, 150);
   },
 
   update: function (dt) {
@@ -371,8 +371,7 @@ var Enemy = SheetSprite.extend({
         reset();
       }
 
-      var fireTest = Math.floor(Math.random() * (this.stepDelay + 1));
-      if (getRandomArbitrary(0, 1000) <= 5 * (this.stepDelay + 1)) {
+      if (getRandomArbitrary(0, 1000) <= 20 * (this.stepDelay + 1)) {
         this.doShoot = true;
       }
       this.position.x += 10 * alienDirection;
@@ -431,8 +430,8 @@ var ParticleExplosion = Class.extend({
       var speed = Math.floor(Math.random() * spd / 2) + spd;
       var life = Math.floor(Math.random() * lif) + lif / 2;
       var radians = angle * Math.PI / 180;
-      var xunits = Math.cos(radians) * speed;
-      var yunits = Math.sin(radians) * speed;
+      var xunits = Math.cos(radians) * speed / 2;
+      var yunits = Math.sin(radians) * speed / 2;
 
       if (this.particlePool.length > 0) {
         var tempParticle = this.particlePool.pop();
@@ -691,7 +690,7 @@ function drawGame(resized) {
 
 function drawStartScreen() {
   fillCenteredText("Space Invaders", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2.75, '#FFFFFF', 36);
-  fillBlinkingText("Se aproxime para jogar!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 500, '#FFFFFF', 36);
+  fillBlinkingText("Posicione sua mão para jogar!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 500, '#FFFFFF', 36);
 }
 
 function animate() {

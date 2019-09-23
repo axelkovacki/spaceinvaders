@@ -1,5 +1,4 @@
 // Detection
-
 const webcam = document.getElementById("webcam");
 const webCanvas = document.getElementById("webcam-canvas");
 const context = webCanvas.getContext("2d");
@@ -32,6 +31,11 @@ function runDetection() {
     if (predictions[0]) {
       position = predictions[0].bbox[0];
     }
+    if(hasGameStarted === false) {
+      initGame();
+      hasGameStarted = true;
+    }
+
     setTimeout(() => {
       runDetection(webcam)
     }, videoInterval);
