@@ -46,7 +46,7 @@
       top: 0px;
       right: 0px;
       width: 23%;
-      height: 290px;
+      /* height: 290px; */
       margin-top: 35px;
     }
 
@@ -68,7 +68,8 @@
       border: solid 5px #f04d6e;
       display: grid;
       justify-content: center;
-      padding: 15px 70px;
+      padding: 20px 40px 30px;
+      position: relative;
     }
 
     .box h1 {
@@ -81,18 +82,24 @@
     .box ul {
       list-style-type: none;
       padding: 0px;
+      padding-right: 65px;
     }
 
     .box li {
       color: #fff;
-      font-size: 23px;
+      font-size: 18px;
       font-weight: 500;
       margin: 15px 0px;
+      position: relative;
+      text-transform: uppercase;
     }
 
     .box li span {
       color: #ffed00;
       margin-left: 5px;
+      position: absolute;
+      right: -60px;
+      top: 0px;
     }
 
     .box li label {
@@ -101,6 +108,10 @@
     }
   </style>
   <script type="text/javascript" src="/js/instascan.min.js"></script>
+  <script type="text/javascript" src="/js/helper.js"></script>
+  <script type="text/javascript" src="/js/ranking.js"></script>
+  <script type="text/javascript" src="/js/vcard.js"></script>
+  <script type="text/javascript" src="/js/handtrack.min.js"></script>
 </head>
 
 <body>
@@ -116,50 +127,14 @@
           <h1>RANKING</h1>
         </div>
         <div>
-          <ul>
-            <li>
-              <label> 1º </label> Áxel Kovacki <span>250</span>
-            </li>
-            <li>
-              <label> 1º </label> Áxel Kovacki <span>250</span>
-            </li>
-            <li>
-              <label> 1º </label> Áxel Kovacki <span>250</span>
-            </li>
-            <li>
-              <label> 1º </label> Áxel Kovacki <span>250</span>
-            </li>
-            <li>
-              <label> 1º </label> Áxel Kovacki <span>250</span>
-            </li>
-            <li>
-              <label> 1º </label> Áxel Kovacki <span>250</span>
-            </li>
-            <li>
-              <label> 1º </label> Áxel Kovacki <span>250</span>
-            </li>
-            <li>
-              <label> 1º </label> Áxel Kovacki <span>250</span>
-            </li>
-            <li>
-              <label> 1º </label> Áxel Kovacki <span>250</span>
-            </li>
-            <li>
-              <label> 1º </label> Áxel Kovacki <span>250</span>
-            </li>
-          </ul>
+          <ul id="ranking"></ul>
         </div>
       </div>
     </div>
-
-
     <canvas id="game-canvas"></canvas>
     <video class="videobox canvasbox" autoplay="autoplay" id="webcam"></video>
     <canvas id="webcam-canvas" class="border canvasbox"></canvas>
   </div>
-
-  <script type="text/javascript" src="/js/vcard.js"></script>
-  <script type="text/javascript" src="/js/handtrack.min.js"></script>
   <script type="text/javascript" src="/js/game.js"></script>
   <script type="text/javascript" src="/js/detection.js"></script>
 </body>

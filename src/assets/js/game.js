@@ -172,6 +172,7 @@ var keyStates = null;
 var prevKeyStates = null;
 var lastTime = 0;
 var player = null;
+var currentPlayer = null;
 var aliens = [];
 var particleManager = null;
 var updateAlienLogic = false;
@@ -180,8 +181,6 @@ var alienYDown = 0;
 var alienCount = 0;
 var wave = 1;
 var hasGameStarted = false;
-var hasGameFinished = false;
-
 
 
 // ###################################################################
@@ -608,13 +607,19 @@ function resolveBulletEnemyCollisions() {
   }
 }
 
+async function resetGame() {
+  hasGameStarted = false;
+  currentPlayer.score = player.score;
+  await postToAPI('/ranking', currentPlayer);
+  await setRanking();
+}
+
 function resolveBulletPlayerCollisions() {
   for (var i = 0, len = aliens.length; i < len; i++) {
     var alien = aliens[i];
     if (alien.bullet !== null && checkRectCollision(alien.bullet.bounds, player.bounds)) {
       if (player.lives === 0) {
-        hasGameStarted = false;
-        hasGameFinished = true;
+        resetGame();
       } else {
         alien.bullet.alive = false;
         particleManager.createExplosion(player.position.x, player.position.y, '#ffed00', 100, 8, 8, 6, 0.001, 40);
@@ -692,7 +697,7 @@ function drawGame(resized) {
 
 function drawStartScreen() {
   fillCenteredText("Space Invaders", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2.75, '#FFFFFF', 36);
-  fillBlinkingText("Posicione sua mão para jogar!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 500, '#FFFFFF', 36);
+  fillBlinkingText("Posicione o seu crachá para jogar!", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 500, '#FFFFFF', 36);
 }
 
 function animate() {

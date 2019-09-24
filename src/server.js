@@ -15,13 +15,14 @@ routes.get('/', (req, res) => {
   return res.sendFile(path.join(`${__dirname}/views/index.html`));
 });
 
-routes.get('/scores', (req, res) => {
+routes.get('/ranking', (req, res) => {
   let users = fs.readFileSync(`${__dirname}/assets/js/users.json`);
-  users = JSON.parse(users);
-
+  
   if(users.length === 0) {
     return res.status(404).send('Scores not found');
   }
+  
+  users = JSON.parse(users);
 
   let scores = new Array();
 
@@ -46,7 +47,40 @@ routes.get('/scores', (req, res) => {
     }
   });
 
+  if(scores.length === 0) {
+    return res.status(200).json(scores);
+  }
+
+  scores.sort((a, b) => {
+    return b.score - a.score;
+  })
+
+  if(scores.length > 10) {
+    scores.length = 10;
+  }
+
   return res.status(200).json(scores);
+});
+
+routes.post('/ranking', (req, res) => {
+  const { name, score, timestamp } = req.body;
+
+  let users = fs.readFileSync(`${__dirname}/assets/js/users.json`);
+  users = JSON.parse(users);
+
+  users.map((a, i) => {
+    if(a.fn === name && a.timestamp === timestamp ) {
+      users[i].score = score;
+    }
+  });
+
+  fs.writeFile(`${__dirname}/assets/js/users.json`, JSON.stringify(users), (err) => {
+    if (err) {
+      return res.status(500).send('Fail to save User');
+    }
+  });
+
+  return res.status(200).json(users);
 });
 
 routes.post('/create-user', (req, res) => {

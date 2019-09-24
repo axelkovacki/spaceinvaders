@@ -34,10 +34,6 @@ function runDetection() {
       // No moviment player with this value
       position = 245;
     }
-    if(hasGameStarted === false) {
-      initGame();
-      hasGameStarted = true;
-    }
 
     setTimeout(() => {
       runDetection(webcam)

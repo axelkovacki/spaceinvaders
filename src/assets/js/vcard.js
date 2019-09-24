@@ -50,31 +50,28 @@ const vParse = input => {
   return fields;
 }
 
-const sendToAPI = async (content) => {
-  try {
-    let response = await fetch('/create-user', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(content)
-    });
-
-    console.log('Success', response);
-  } catch(err) {
-    throw new Error(err);
-  }
-}
-
-
 let scanner = new Instascan.Scanner({ video: document.getElementById('webcam') });
 scanner.addListener('scan', function (content) {
   content = vParse(content);
+  content.title = toUTF(content.title);
+  content.fn = toUTF(content.fn);
+  content.org = toUTF(content.org);
   content.timestamp = Date.now();
   content.score = 0;
 
-  sendToAPI(content);
+  // Set current player
+  currentPlayer = {
+    name: content.fn,
+    score: content.score,
+    timestamp: content.timestamp
+  }
+
+  postToAPI('/create-user', content);
+
+  if(hasGameStarted === false) {
+    initGame();
+    hasGameStarted = true;
+  }
 });
 Instascan.Camera.getCameras().then(function (cameras) {
   if (cameras.length > 0) {
