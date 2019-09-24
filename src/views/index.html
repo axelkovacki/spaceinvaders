@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <meta charset="UTF-8">
   <title>Space Invaders</title>
   <style>
     /* Styling needed for a fullscreen canvas and no scrollbars. */
@@ -45,12 +46,61 @@
       top: 0px;
       right: 0px;
       width: 23%;
+      height: 290px;
+      margin-top: 35px;
     }
 
     video {
       display: none;
     }
+
+    .scores {
+      display: flex;
+      position: absolute;
+      margin-top: 35px;
+      justify-content: center;
+      top: 0px;
+      left: 0px;
+      width: 23%;
+    }
+
+    .box {
+      border: solid 5px #f04d6e;
+      display: grid;
+      justify-content: center;
+      padding: 15px 70px;
+    }
+
+    .box h1 {
+      text-align: center;
+      color: #f04d6e;
+      font-size: 26px;
+      font-weight: 500;
+    }
+
+    .box ul {
+      list-style-type: none;
+      padding: 0px;
+    }
+
+    .box li {
+      color: #fff;
+      font-size: 23px;
+      font-weight: 500;
+      margin: 15px 0px;
+    }
+
+    .box li span {
+      color: #ffed00;
+      margin-left: 5px;
+    }
+
+    .box li label {
+      color: #fff;
+      margin-right: 5px;
+    }
   </style>
+  <script type="text/javascript" src="/js/instascan.min.js"></script>
 </head>
 
 <body>
@@ -60,15 +110,58 @@
     align-items: center;
     justify-content: center;
   ">
-    <canvas id="game-canvas"></canvas>
+    <div class="scores">
+      <div class="box">
+        <div>
+          <h1>RANKING</h1>
+        </div>
+        <div>
+          <ul>
+            <li>
+              <label> 1º </label> Áxel Kovacki <span>250</span>
+            </li>
+            <li>
+              <label> 1º </label> Áxel Kovacki <span>250</span>
+            </li>
+            <li>
+              <label> 1º </label> Áxel Kovacki <span>250</span>
+            </li>
+            <li>
+              <label> 1º </label> Áxel Kovacki <span>250</span>
+            </li>
+            <li>
+              <label> 1º </label> Áxel Kovacki <span>250</span>
+            </li>
+            <li>
+              <label> 1º </label> Áxel Kovacki <span>250</span>
+            </li>
+            <li>
+              <label> 1º </label> Áxel Kovacki <span>250</span>
+            </li>
+            <li>
+              <label> 1º </label> Áxel Kovacki <span>250</span>
+            </li>
+            <li>
+              <label> 1º </label> Áxel Kovacki <span>250</span>
+            </li>
+            <li>
+              <label> 1º </label> Áxel Kovacki <span>250</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
+
+    <canvas id="game-canvas"></canvas>
     <video class="videobox canvasbox" autoplay="autoplay" id="webcam"></video>
     <canvas id="webcam-canvas" class="border canvasbox"></canvas>
   </div>
 
-  <script src="/js/handtrack.min.js"></script>
-  <script src="/js/game.js"></script>
-  <script src="/js/detection.js"></script>
+  <script type="text/javascript" src="/js/vcard.js"></script>
+  <script type="text/javascript" src="/js/handtrack.min.js"></script>
+  <script type="text/javascript" src="/js/game.js"></script>
+  <script type="text/javascript" src="/js/detection.js"></script>
 </body>
 
 </html>

@@ -30,6 +30,9 @@ function runDetection() {
     model.renderPredictions(predictions, webCanvas, context, webcam);
     if (predictions[0]) {
       position = predictions[0].bbox[0];
+    } else {
+      // No moviment player with this value
+      position = 245;
     }
     if(hasGameStarted === false) {
       initGame();

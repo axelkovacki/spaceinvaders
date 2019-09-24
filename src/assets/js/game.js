@@ -265,13 +265,13 @@ var Player = SheetSprite.extend({
   },
 
   handleInput: function () { 
-    if (position <= 230) {
+    if (position <= 240) {
       this.xVel = -175;
-      console.log("left")
-    } else if (position >= 230) {
-      console.log("right")
+    } else if (position >= 250) {
       this.xVel = 175;
-    } else this.xVel = 0;
+    } else {
+      this.xVel = 0;
+    }
 
     if (this.bulletDelayAccumulator > 0.5) {
       this.shoot();
