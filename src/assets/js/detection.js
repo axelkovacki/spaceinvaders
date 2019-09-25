@@ -21,11 +21,8 @@ function startVideo() {
   });
 }
 
-startVideo();
-
 function runDetection() {
   model.detect(webcam).then(predictions => {
-
     // get the middle x value of the bounding box and map to paddle location
     model.renderPredictions(predictions, webCanvas, context, webcam);
     if (predictions[0]) {
@@ -44,5 +41,6 @@ function runDetection() {
 // Load the model.
 handTrack.load(modelParams).then(lmodel => {
   // detect objects in the image.
-  model = lmodel
+  model = lmodel;
+  startVideo();
 });
