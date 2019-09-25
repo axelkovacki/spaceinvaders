@@ -2,7 +2,7 @@ const setRanking = async () => {
   let data = JSON.parse(await getToAPI('/ranking'));
 
   var ul = document.querySelector('#ranking');
-
+  
   while(ul.firstChild){
     ul.removeChild(ul.firstChild);
   }
